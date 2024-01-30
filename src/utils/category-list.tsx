@@ -1,4 +1,10 @@
-export const categoriesArray = [
+export type MyArrayType = {
+  id: number;
+  name: string;
+  parent_id: number;
+};
+
+export const categoriesArray: MyArrayType[] = [
   { id: 139, name: "VR & AR", parent_id: 127 },
   { id: 140, name: "Web Design", parent_id: 127 },
   { id: 142, name: "English Learning", parent_id: 116 },
@@ -173,8 +179,10 @@ categoriesArray.sort(function (a, b) {
   return 0;
 });
 
-let array1 = [];
-let array2 = [];
+export const array1: MyArrayType[] = [];
+
+export const array2: MyArrayType[] = [];
+
 // DIVIDE ARRAY INTO SELECTION BOX 1
 for (let i = 0; i < 80; i++) {
   array1.push(categoriesArray[i]);
@@ -182,5 +190,3 @@ for (let i = 0; i < 80; i++) {
 for (let i = 80; i < categoriesArray.length; i++) {
   array2.push(categoriesArray[i]);
 }
-
-export { array1, array2 };

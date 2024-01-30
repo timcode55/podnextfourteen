@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function getRatingDataFromDb(podArray) {
   let test = Array.isArray(podArray);
   console.log(test, "test");
-  //   console.log(updateArray, "updateArray");
+  console.log(podArray, "podArray");
   let mongoClient;
   try {
     mongoClient = getClient();
@@ -32,7 +32,7 @@ export async function getRatingDataFromDb(podArray) {
   } catch (error) {
     console.error("Failed to update podcasts from DB", error);
   }
-
+  console.log(finalArray, "FINAL ARRAY");
   return finalArray;
 }
 
@@ -41,6 +41,7 @@ export async function getTopPodsByCategory(categoryId, page) {
     const response = await fetch(
       `https://listen-api.listennotes.com/api/v2/best_podcasts?genre_id=${categoryId}&page=${page}&region=us&safe_mode=0`,
       {
+        // next: { revalidate: 86400 },
         headers: {
           "X-ListenAPI-Key": process.env.NEXT_PUBLIC_LISTEN_NOTES_API_KEY,
           "Cache-Control": "max-age=86400",
@@ -107,11 +108,12 @@ export async function getFilteredPodcasts(rating, numRatings, genre) {
   const getFilteredPods = db.collection("ratings");
   try {
     console.log(rating, numRatings, genre);
+    const decodedGenre = decodeURIComponent(genre);
     const result = await getFilteredPods
       .find({
         rating: { $gte: Number(rating) },
         numberOfRatings: { $gte: Number(numRatings) },
-        listenNotesGenre: genre,
+        listenNotesGenre: decodedGenre,
       })
       .toArray();
     console.log(result, "result for filtered");

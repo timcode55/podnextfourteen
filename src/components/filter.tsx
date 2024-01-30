@@ -1,6 +1,6 @@
 "use client";
 import classes from "./filter.module.css";
-import PodcastContext from "@/store/podcastContext";
+import { usePodcastContext } from "@/store/podcastContext";
 import { categoriesArray } from "../utils/category-list";
 import { useState, useContext } from "react";
 import axios from "axios";
@@ -12,8 +12,9 @@ const Filter = () => {
   const [rating, setRating] = useState("");
   const [genre, setGenre] = useState("AI & Data Science");
   const [numRatingsFilter, setNumRatingsFilter] = useState(10);
-  const podcastCtx = useContext(PodcastContext);
-  console.log(podcastCtx, "PODCASTCTX");
+  const podcastCtx = usePodcastContext();
+  // const { setRating } = usePodcastContext();
+  console.log(usePodcastContext(), "PODCASTCTX in filter");
 
   const handleRatingInput = (e) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ const Filter = () => {
     e.preventDefault();
 
     try {
-      // podcastCtx.setLoader(true);
+      podcastCtx.setLoader(true);
       const stringGenre = encodeURIComponent(genre);
       // const topPods = await axios.get(
       //   `/api/getTopPodcasts?rating=${rating}&numberRatings=${numRatingsFilter}&genre=${stringGenre}`,
@@ -48,13 +49,19 @@ const Filter = () => {
       //     },
       //   }
       // );
+      console.log(
+        rating,
+        numRatingsFilter,
+        stringGenre,
+        "RATING, NUMRATINGS, GENRE"
+      );
       const topFilteredPods = await getFilteredPodcasts(
         rating,
         numRatingsFilter,
         stringGenre
       );
-      console.log(topFilteredPods, "TOPFILTEREDPODS");
-      const result = topFilteredPods.data.data.sort((a, b) => {
+      console.log(topFilteredPods, "result");
+      const result = topFilteredPods.sort((a, b) => {
         return b.rating - a.rating;
       });
       podcastCtx.setRecommend(result);

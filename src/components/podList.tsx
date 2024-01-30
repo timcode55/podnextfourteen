@@ -3,10 +3,10 @@ import { useContext, useState } from "react";
 import PodCard from "./podCard";
 import classes from "./podList.module.css";
 import Arrow from "./arrow";
-import PodcastContext from "../store/podcastContext";
+import { usePodcastContext } from "../store/podcastContext";
 
 const PodList = (props) => {
-  const PodcastCtx = useContext(PodcastContext);
+  const PodcastCtx = usePodcastContext();
   return (
     <div className={classes.outerContainer}>
       {PodcastCtx.loader ? (
