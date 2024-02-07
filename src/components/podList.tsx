@@ -1,11 +1,27 @@
 "use client";
-import { useContext, useState } from "react";
 import PodCard from "./podCard";
 import classes from "./podList.module.css";
 import Arrow from "./arrow";
 import { usePodcastContext } from "../store/podcastContext";
 
-const PodList = (props) => {
+interface PodListProps {
+  podcasts: Array<{
+    title: string;
+    description: string;
+    rating: number;
+    numberOfRatings: number;
+    id: number;
+    image: string;
+    listennotes_url: string;
+    website: string;
+    itunes: string;
+  }>;
+  getNewPodcasts: Function;
+  renderCache: Function;
+  podCache: any;
+}
+
+const PodList = (props: PodListProps) => {
   const PodcastCtx = usePodcastContext();
   return (
     <div className={classes.outerContainer}>
@@ -23,13 +39,24 @@ const PodList = (props) => {
             {props.podcasts &&
               props?.podcasts?.map((pod) => (
                 <div key={pod.id}>
-                  <PodCard key={pod.id} podcast={pod} />
+                  <PodCard
+                    key={pod.id}
+                    podcast={{
+                      ...pod,
+                      image: pod.image || "",
+                      listennotes_url: pod.listennotes_url || "",
+                      website: pod.website || "",
+                      itunes: pod.itunes || "",
+                    }}
+                  />
                 </div>
               ))}
           </div>
         </div>
       )}
-      {!PodcastCtx.loader && PodcastCtx.recent !== "recommend" ? (
+      {!PodcastCtx.loader &&
+      PodcastCtx.recent !== "recommend" &&
+      PodcastCtx.recent !== "similar" ? (
         <Arrow
           getNewPodcasts={props.getNewPodcasts}
           renderCache={props.renderCache}

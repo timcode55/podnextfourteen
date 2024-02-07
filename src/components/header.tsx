@@ -1,19 +1,12 @@
 "use client";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PodList from "./podList";
-import {
-  array1,
-  array2,
-  categoriesArray,
-  MyArrayType,
-} from "@/utils/category-list";
+import { array1, array2, categoriesArray } from "@/utils/category-list";
 import { usePodcastContext } from "@/store/podcastContext";
 import classes from "./header.module.css";
 
 import { getTopPodsByCategory } from "@/lib/actions/actions";
 import { getRatingDataFromDb } from "@/lib/actions/actions";
-
-const podCache = {};
 
 interface HeaderProps {
   podcasts: Array<{
@@ -22,55 +15,60 @@ interface HeaderProps {
     rating: number;
     numberOfRatings: number;
     id: number;
+    image: string;
+    listennotes_url: string;
+    website: string;
+    itunes: string;
   }>;
 }
 
-const Header: React.FC<HeaderProps> = (props) => {
+const podCache: any = {};
+
+const Header = (props: HeaderProps) => {
   const [value, setValue] = useState("");
   const [category, setCategory] = useState("");
   const [podcasts, setPodcasts] = useState(props.podcasts);
-  // const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [mostRecentUpdate, setMostRecentUpdate] = useState("podcasts");
   const podcastCtx = usePodcastContext();
 
-  const renderCache = (key) => {
-    if (podCache[key]) {
-      setPodcasts(podCache[key]);
-    } else {
-      getNewPodcasts(category, podcastCtx.page);
-    }
+  const renderCache = (key: string) => {
+    console.log(key, "KEY FOR CACHE, check rendercache");
+    console.log(podCache, "PODCACHE CHECK RENDERCACHE");
+
+    setPodcasts(podCache[key]);
   };
 
   podCache["67_1"] = props.podcasts || [];
 
-  const handleChange = (e) => {
-    setValue(e.target.value);
-    let findValue: number = Number(e.target.value);
+  const handleChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    podcastCtx.setRecentUpdate("podcasts");
+    const target = e.target as HTMLSelectElement;
+    setValue(target.value);
+    let findValue: number = Number(target.value);
 
-    let categoryName: string = categoriesArray.find(
+    let categoryName = categoriesArray?.find(
       (item) => item.id === findValue
-    ).name;
+    )?.name;
 
-    let categoryId = categoriesArray.find((item) => item.id === findValue).id;
-    setCategory(categoryName, categoryId);
-    podcastCtx.setCategory(categoryName, categoryId);
-    podcastCtx.page = 1;
+    let categoryId = categoriesArray?.find((item) => item.id === findValue)?.id;
+    setCategory(categoryName || "");
+    podcastCtx.setCategory(categoryName || "", categoryId || 0);
+    podcastCtx.setPage(1);
     const key = `${categoryId}_${podcastCtx.page}`;
     console.log(key, "KEY FOR CACHE");
-    podcastCtx.setRecentUpdate("podcasts");
+
+    podcastCtx.setKey(key);
     podcastCtx.setPage(1);
     if (podCache[key]) {
       renderCache(key);
     } else {
-      getNewPodcasts(e.target.value, 1);
+      console.log("had to get new podccats");
+      getNewPodcasts(target.value, 1);
     }
   };
 
-  async function getNewPodcasts(
-    categoryId: String,
-    page: Number,
-    genreId: String
-  ) {
+  async function getNewPodcasts(categoryId: String, page: Number) {
     console.log(categoryId, "CATEGORYID");
     podcastCtx.setLoader(true);
     const updatedCategoryPods = await getTopPodsByCategory(categoryId, page);
@@ -80,6 +78,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     );
     console.log(getPodRatingDataFromDB, "getPodRatingDataFromDB");
     setPodcasts(getPodRatingDataFromDB);
+    podcastCtx.setPodcasts(getPodRatingDataFromDB);
     const key = `${categoryId}_${page}`;
     podCache[key] = getPodRatingDataFromDB || [];
     podcastCtx.setLoader(false);
@@ -87,15 +86,20 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   useEffect(() => {
     if (podcastCtx.recent === "recommend") {
-      setPodcasts(podcastCtx.recommend);
+      podcastCtx.setPodcasts(podcastCtx.recommend);
       setMostRecentUpdate("recommend");
     } else if (podcastCtx.recent === "podcasts") {
       setPodcasts(podcastCtx.podcasts);
+      setMostRecentUpdate("podcasts");
+    } else if (podCache[podcastCtx.key]) {
+      setPodcasts(podCache[podcastCtx.key]);
+      podcastCtx.setPodcasts(podCache[podcastCtx.key]);
       setMostRecentUpdate("podcasts");
     }
   }, [podcastCtx.recommend, podcastCtx.podcasts, podcastCtx.recent]);
 
   console.log(podCache, "PODCAST CACHE");
+  console.log(podcasts, "podcasts check for cache working after recommend");
   return (
     <div className={classes.backgroundContainer}>
       <div className={classes.headerContainer}>
@@ -166,10 +170,6 @@ const Header: React.FC<HeaderProps> = (props) => {
       ) : (
         <PodList
           podcasts={podcasts}
-          category={parseInt(value)}
-          getData={props.getApiData}
-          status={props.status}
-          cache={props.cache}
           getNewPodcasts={getNewPodcasts}
           renderCache={renderCache}
           podCache={podCache}

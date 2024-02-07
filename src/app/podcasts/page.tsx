@@ -4,7 +4,9 @@ import classes from "./podcasts.module.css";
 import { getRatingDataFromDb } from "@/lib/actions/actions";
 import { getTopPodsByCategory } from "@/lib/actions/actions";
 
-async function Podcasts() {
+export const revalidate = 86400;
+
+export default async function Podcasts() {
   let data = await getTopPodsByCategory(67, 1);
   let finalPods = await getRatingDataFromDb(data);
 
@@ -15,5 +17,3 @@ async function Podcasts() {
     </div>
   );
 }
-
-export default Podcasts;

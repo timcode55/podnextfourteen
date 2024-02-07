@@ -1,14 +1,22 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import PodList from "@/components/podList";
 import { getRatingDataFromDb } from "@/lib/actions/actions";
 
+import { usePodcastContext } from "@/store/podcastContext";
+
+import { ParsedUrlQuery } from "querystring";
+
+interface PodcastDetailPageProps {
+  params: {
+    id: string;
+  };
+  searchParams: ParsedUrlQuery;
+}
+
 async function getPodcast(podId: String) {
   const response = await axios.get(
-    // `https://listen-api.listennotes.com/api/v2/podcasts/${podId}?next_episode_pub_date=1479154463000&sort=recent_first`,
     `https://listen-api.listennotes.com/api/v2/podcasts/${podId}/recommendations?safe_mode=0`,
     {
       headers: {
@@ -20,13 +28,11 @@ async function getPodcast(podId: String) {
   return response.data;
 }
 
-export default function PodcastDetailPage({ params, searchParams }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  // const searchParams = useSearchParams();
-  console.log(params, "PARAMS");
-  console.log(searchParams, "SEARCHPARAMS");
-  const [podcasts, setPodcasts] = useState(null);
+export default function PodcastDetailPage({
+  params,
+  searchParams,
+}: PodcastDetailPageProps) {
+  const PodcastCtx = usePodcastContext();
 
   useEffect(() => {
     const fetchPodcast = async () => {
@@ -38,7 +44,8 @@ export default function PodcastDetailPage({ params, searchParams }) {
           const finalPodData = await getRatingDataFromDb(
             podcastData.recommendations
           );
-          setPodcasts(finalPodData);
+          PodcastCtx.setPodcasts(finalPodData);
+          PodcastCtx.setRecentUpdate("similar");
         } catch (error) {
           console.error("Error fetching podcast:", error);
         }
@@ -47,15 +54,21 @@ export default function PodcastDetailPage({ params, searchParams }) {
     fetchPodcast();
   }, [searchParams]);
 
-  if (!podcasts) {
+  if (!PodcastCtx.podcasts) {
     return <div>Loading...</div>;
   }
+
+  console.log(PodcastCtx.podcasts, "PODCASTS in [id]/page.tsx");
 
   return (
     <div>
       <h1 className="recommend-title">Recommended Similar Podcasts</h1>
-      <h2>{podcasts.description}</h2>
-      <PodList podcasts={podcasts} />
+      <PodList
+        podcasts={PodcastCtx.podcasts}
+        getNewPodcasts={() => {}}
+        renderCache={() => {}}
+        podCache={[]}
+      />
     </div>
   );
 }

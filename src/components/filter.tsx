@@ -2,66 +2,53 @@
 import classes from "./filter.module.css";
 import { usePodcastContext } from "@/store/podcastContext";
 import { categoriesArray } from "../utils/category-list";
-import { useState, useContext } from "react";
-import axios from "axios";
 import { filterNumberRatings } from "../utils/filterNumberRatings";
 import { ratings } from "../utils/ratings";
 import { getFilteredPodcasts } from "@/lib/actions/actions";
 
 const Filter = () => {
-  const [rating, setRating] = useState("");
-  const [genre, setGenre] = useState("AI & Data Science");
-  const [numRatingsFilter, setNumRatingsFilter] = useState(10);
   const podcastCtx = usePodcastContext();
-  // const { setRating } = usePodcastContext();
-  console.log(usePodcastContext(), "PODCASTCTX in filter");
+  // console.log(usePodcastContext(), "PODCASTCTX in filter");
 
-  const handleRatingInput = (e) => {
+  const handleRatingInput = (e: React.FormEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    podcastCtx.setRating(e.target.value);
-    setRating(e.target.value);
+    const target = e.target as HTMLSelectElement;
+    podcastCtx.setRating(target.value);
   };
 
-  const handleGenreInput = (e) => {
+  const handleGenreInput = (e: React.FormEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    // podcastCtx.setGenre(e.target.value);
-    setGenre(e.target.value);
+    const target = e.target as HTMLSelectElement;
+    podcastCtx.setGenre(target.value);
   };
 
-  const handleNumRatingsInput = (e) => {
+  const handleNumRatingsInput = (e: React.FormEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    // podcastCtx.setNumberRatings(e.target.value);
-    setNumRatingsFilter(e.target.value);
+    const target = e.target as HTMLSelectElement;
+    podcastCtx.setNumberRatings(parseInt(target.value));
   };
 
-  const handleClick = async (e) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    interface Podcast {
+      title: string;
+      description: string;
+      rating: number;
+      numberOfRatings: number;
+      id: number;
+    }
 
     try {
       podcastCtx.setLoader(true);
-      const stringGenre = encodeURIComponent(genre);
-      // const topPods = await axios.get(
-      //   `/api/getTopPodcasts?rating=${rating}&numberRatings=${numRatingsFilter}&genre=${stringGenre}`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
-      console.log(
-        rating,
-        numRatingsFilter,
-        stringGenre,
-        "RATING, NUMRATINGS, GENRE"
-      );
+      const stringGenre = encodeURIComponent(podcastCtx.genre);
       const topFilteredPods = await getFilteredPodcasts(
-        rating,
-        numRatingsFilter,
+        podcastCtx.rating,
+        podcastCtx.numberRatings,
         stringGenre
       );
-      console.log(topFilteredPods, "result");
-      const result = topFilteredPods.sort((a, b) => {
+      // console.log(topFilteredPods, "result");
+      const result = topFilteredPods.sort((a: Podcast, b: Podcast) => {
         return b.rating - a.rating;
       });
       podcastCtx.setRecommend(result);

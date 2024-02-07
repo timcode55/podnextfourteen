@@ -5,10 +5,16 @@ import {
   faCaretSquareLeft,
   faCaretSquareRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { usePodcastContext } from "../store/podcastContext";
+import { usePodcastContext } from "@/store/podcastContext";
 import { useContext } from "react";
 
-const Arrow = (props) => {
+interface arrowProps {
+  getNewPodcasts: Function;
+  renderCache: Function;
+  podCache: any;
+}
+
+const Arrow = (props: arrowProps) => {
   const PodcastCtx = usePodcastContext();
   const page = PodcastCtx.page;
 

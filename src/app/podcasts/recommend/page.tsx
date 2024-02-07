@@ -5,14 +5,21 @@ import PodList from "@/components/podList";
 import classes from "./recommend.module.css";
 import { usePodcastContext } from "@/store/podcastContext";
 
-export default function Recommend(props) {
+export default function Recommend() {
   const podcastCtx = usePodcastContext();
 
   return (
     <div className={classes.mainContainer}>
       <h1>Recommend Page</h1>
       <Filter />
-      {podcastCtx.recommend && <PodList podcasts={podcastCtx.recommend} />}
+      {podcastCtx.recommend && (
+        <PodList
+          podcasts={podcastCtx.recommend}
+          getNewPodcasts={() => {}}
+          renderCache={() => {}}
+          podCache={[]}
+        />
+      )}
     </div>
   );
 }
