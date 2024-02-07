@@ -41,18 +41,19 @@ const Filter = () => {
 
     try {
       podcastCtx.setLoader(true);
+      podcastCtx.setRecentUpdate("recommend");
       const stringGenre = encodeURIComponent(podcastCtx.genre);
       const topFilteredPods = await getFilteredPodcasts(
         podcastCtx.rating,
         podcastCtx.numberRatings,
         stringGenre
       );
-      // console.log(topFilteredPods, "result");
       const result = topFilteredPods.sort((a: Podcast, b: Podcast) => {
         return b.rating - a.rating;
       });
       podcastCtx.setRecommend(result);
-      podcastCtx.setRecentUpdate("recommend");
+
+      console.log(topFilteredPods, "result");
       podcastCtx.setLoader(false);
     } catch (error) {
       console.error(error);

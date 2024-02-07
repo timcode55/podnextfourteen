@@ -27,7 +27,7 @@ const podCache: any = {};
 const Header = (props: HeaderProps) => {
   const [value, setValue] = useState("");
   const [category, setCategory] = useState("");
-  const [podcasts, setPodcasts] = useState(props.podcasts);
+  // const [podcasts, setPodcasts] = useState(props.podcasts);
   const [loader, setLoader] = useState(false);
   const [mostRecentUpdate, setMostRecentUpdate] = useState("podcasts");
   const podcastCtx = usePodcastContext();
@@ -36,7 +36,7 @@ const Header = (props: HeaderProps) => {
     console.log(key, "KEY FOR CACHE, check rendercache");
     console.log(podCache, "PODCACHE CHECK RENDERCACHE");
 
-    setPodcasts(podCache[key]);
+    podcastCtx.setPodcasts(podCache[key]);
   };
 
   podCache["67_1"] = props.podcasts || [];
@@ -77,7 +77,7 @@ const Header = (props: HeaderProps) => {
       updatedCategoryPods
     );
     console.log(getPodRatingDataFromDB, "getPodRatingDataFromDB");
-    setPodcasts(getPodRatingDataFromDB);
+    podcastCtx.setPodcasts(getPodRatingDataFromDB);
     podcastCtx.setPodcasts(getPodRatingDataFromDB);
     const key = `${categoryId}_${page}`;
     podCache[key] = getPodRatingDataFromDB || [];
@@ -85,21 +85,21 @@ const Header = (props: HeaderProps) => {
   }
 
   useEffect(() => {
+    podcastCtx.setPodcasts(props.podcasts);
+  }, []);
+
+  useEffect(() => {
     if (podcastCtx.recent === "recommend") {
       podcastCtx.setPodcasts(podcastCtx.recommend);
       setMostRecentUpdate("recommend");
     } else if (podcastCtx.recent === "podcasts") {
-      setPodcasts(podcastCtx.podcasts);
-      setMostRecentUpdate("podcasts");
-    } else if (podCache[podcastCtx.key]) {
-      setPodcasts(podCache[podcastCtx.key]);
-      podcastCtx.setPodcasts(podCache[podcastCtx.key]);
+      podcastCtx.setPodcasts(podcastCtx.podcasts);
       setMostRecentUpdate("podcasts");
     }
   }, [podcastCtx.recommend, podcastCtx.podcasts, podcastCtx.recent]);
 
-  console.log(podCache, "PODCAST CACHE");
-  console.log(podcasts, "podcasts check for cache working after recommend");
+  // console.log(podCache, "PODCAST CACHE");
+  // console.log(podcasts, "podcasts check for cache working after recommend");
   return (
     <div className={classes.backgroundContainer}>
       <div className={classes.headerContainer}>
@@ -169,7 +169,7 @@ const Header = (props: HeaderProps) => {
         "....loading"
       ) : (
         <PodList
-          podcasts={podcasts}
+          podcasts={podcastCtx.podcasts}
           getNewPodcasts={getNewPodcasts}
           renderCache={renderCache}
           podCache={podCache}
