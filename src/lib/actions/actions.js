@@ -39,7 +39,7 @@ export async function getRatingDataFromDb(podArray) {
 export async function getTopPodsByCategory(categoryId, page) {
   try {
     const response = await fetch(
-      `https://listen-api.listennotes.com/api/v2/best_podcasts?genre_id=${categoryId}&page=${page}&region=us&safe_mode=0`,
+      `https://listen-api.listennotes.com/api/v2/best_podcasts?genre_id=${categoryId}&page=${page}&region=us&sort=listen_score&safe_mode=0`,
       {
         next: { revalidate: 86400 },
         headers: {

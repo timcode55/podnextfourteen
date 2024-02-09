@@ -20,7 +20,7 @@ export async function GET(request, res) {
       console.log(categoryId, "CATEGORY ID");
       console.log(page, "page");
       const response = await axios.get(
-        `https://listen-api.listennotes.com/api/v2/best_podcasts?genre_id=${categoryId}&page=${page}&region=us&safe_mode=0`,
+        `https://listen-api.listennotes.com/api/v2/best_podcasts?genre_id=${categoryId}&page=${page}&region=us&sort=listen_score&safe_mode=0`,
         {
           headers: {
             "X-ListenAPI-Key": process.env.NEXT_PUBLIC_LISTEN_NOTES_API_KEY,
