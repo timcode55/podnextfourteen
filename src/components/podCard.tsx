@@ -23,11 +23,9 @@ const PodCard = (props: PodCardProps) => {
     <div className={classes.divStyle}>
       <div className={classes.podcontainer}>
         <div className={classes.podcontent}>
-          {/* <a href={podcast.listennotes_url} target="_blank" rel="noreferrer"> */}
           <Link href={`/podcasts/${podcast.id}`}>
             <img className={classes.podimage} src={podcast.image} alt="pod1" />
           </Link>
-          {/* </a> */}
           <div className={classes.podtitle}>
             <h1>{podcast.title.substring(0, 52)}</h1>
           </div>
@@ -40,11 +38,18 @@ const PodCard = (props: PodCardProps) => {
             </p>
           </div>
           <div className={classes.podButtons}>
-            <a href={podcast.website} target="_blank" rel="noreferrer">
+            <a href={podcast.website || ""} target="_blank" rel="noreferrer">
               <button className={classes.webButton}>Website</button>
             </a>
-            <a href={podcast.itunes} target="_blank" rel="noreferrer">
-              <button className={classes.webButton}>iTunes Link</button>
+            <a href={podcast.itunes || ""} target="_blank" rel="noreferrer">
+              <button
+                className={`${classes.webButton} ${
+                  podcast.itunes ? "" : classes.disabled
+                }`}
+                disabled={!podcast.itunes}
+              >
+                iTunes Link
+              </button>
             </a>
           </div>
 

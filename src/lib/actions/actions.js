@@ -60,40 +60,6 @@ export async function getTopPodsByCategory(categoryId, page) {
 
 export async function getFilteredPodcasts(rating, numRatings, genre) {
   console.log(rating, "RATING");
-  // let mongoClient;
-  // try {
-  //   mongoClient = getClient();
-  // } catch (error) {
-  //   console.log(error, "ERROR GETTING MONGO CLIENT*****");
-  // }
-  // if (!mongoClient) {
-  //   mongoClient = await connectToDatabase();
-  // }
-  // // const finalArray = [];
-
-  // // const db = mongoClient.db();
-  // // const getTopPods = db.collection("ratings");
-
-  // try {
-  //   const db = mongoClient.db();
-  //   const getTopPods = db.collection("ratings");
-
-  //   const result = await getTopPods
-  //     .find({
-  //       rating: { $gte: Number(rating) },
-  //       numberOfRatings: { $gte: Number(numRatings) },
-  //       listenNotesGenre: genre,
-  //     })
-  //     .toArray();
-
-  //   console.log(result, "gettoppodcasts from Mongodb");
-
-  //   // client.close();
-
-  //   return result;
-  // } catch (e) {
-  //   console.error(e, "Error getting data from the DB");
-  // }
   let mongoClient;
   try {
     mongoClient = getClient();

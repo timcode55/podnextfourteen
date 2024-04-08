@@ -8,6 +8,8 @@ import { usePodcastContext } from "@/store/podcastContext";
 
 import { ParsedUrlQuery } from "querystring";
 
+import classes from "./similar.module.css";
+
 interface PodcastDetailPageProps {
   params: {
     id: string;
@@ -36,6 +38,8 @@ export default function PodcastDetailPage({
 
   useEffect(() => {
     const fetchPodcast = async () => {
+      PodcastCtx.setLoader(true);
+      PodcastCtx.setPodcasts([]);
       const podId = params.id;
       if (podId) {
         try {
@@ -46,6 +50,7 @@ export default function PodcastDetailPage({
           );
           PodcastCtx.setPodcasts(finalPodData);
           PodcastCtx.setRecentUpdate("similar");
+          PodcastCtx.setLoader(false);
         } catch (error) {
           console.error("Error fetching podcast:", error);
         }
@@ -62,13 +67,23 @@ export default function PodcastDetailPage({
 
   return (
     <div>
-      <h1 className="recommend-title">Recommended Similar Podcasts</h1>
-      <PodList
-        podcasts={PodcastCtx.podcasts}
-        getNewPodcasts={() => {}}
-        renderCache={() => {}}
-        podCache={[]}
-      />
+      <h1 className={classes["similar-title"]}>Recommended Similar Podcasts</h1>
+      {PodcastCtx.loader ? (
+        <div className={classes.loadContainer}>
+          <div className={classes.loader}>
+            <div className={`${classes.inner} ${classes.one}`}></div>
+            <div className={`${classes.inner} ${classes.two}`}></div>
+            <div className={`${classes.inner} ${classes.three}`}></div>
+          </div>
+        </div>
+      ) : (
+        <PodList
+          podcasts={PodcastCtx.podcasts}
+          getNewPodcasts={() => {}}
+          renderCache={() => {}}
+          podCache={[]}
+        />
+      )}
     </div>
   );
 }
