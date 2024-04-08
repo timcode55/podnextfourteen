@@ -21,7 +21,7 @@ const Arrow = (props: arrowProps) => {
   const addPage = async () => {
     PodcastCtx.setPage(PodcastCtx.page + 1);
     const key = `${PodcastCtx.category?.id}_${PodcastCtx.page + 1}`;
-    console.log(props.podCache, "PROPS.PODCACHE IN ARROW");
+    // console.log(props.podCache, "PROPS.PODCACHE IN ARROW");
     if (props.podCache[key]) {
       props.renderCache(key);
     } else {
