@@ -53,7 +53,7 @@ const Filter = () => {
       });
       podcastCtx.setRecommend(result);
 
-      console.log(topFilteredPods, "result");
+      console.log(result, "result");
       podcastCtx.setLoader(false);
     } catch (error) {
       console.error(error);

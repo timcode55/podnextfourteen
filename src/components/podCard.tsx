@@ -17,7 +17,7 @@ interface PodCardProps {
 
 const PodCard = (props: PodCardProps) => {
   const { podcast } = props;
-  console.log(podcast, "PODCAST IN PODCARD");
+  // console.log(podcast, "PODCAST IN PODCARD");
 
   return (
     <div className={classes.divStyle}>
