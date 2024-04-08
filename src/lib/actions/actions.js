@@ -4,9 +4,6 @@ import { connectToDatabase, getClient } from "@/helpers/database/mongodb";
 import { revalidatePath } from "next/cache";
 
 export async function getRatingDataFromDb(podArray) {
-  let test = Array.isArray(podArray);
-  console.log(test, "test");
-  console.log(podArray, "podArray");
   let mongoClient;
   try {
     mongoClient = getClient();
